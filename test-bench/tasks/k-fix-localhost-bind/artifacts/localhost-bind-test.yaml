@@ -1,0 +1,67 @@
+# artifacts/localhost-bind-test.yaml
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: localhost-fail-ns
+---
+# 1. Faulty Deployment (The target application)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: faulty-server
+  namespace: localhost-fail-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: faulty-server
+  template:
+    metadata:
+      labels:
+        app: faulty-server
+    spec:
+      containers:
+        - name: server-container
+          image: python:3.9-slim
+          ports:
+            - containerPort: 8000
+          # 故障注入：使用 Python 简单 HTTP 服务器，强制它只监听 127.0.0.1 (localhost)
+          command: ["python3", "-m", "http.server", "--bind", "127.0.0.1", "8000"]
+---
+# 2. Service (Routes to the faulty application)
+apiVersion: v1
+kind: Service
+metadata:
+  name: faulty-svc
+  namespace: localhost-fail-ns
+spec:
+  selector:
+    app: faulty-server
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP
+---
+# 3. Client Pod (The application making the failing request)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-app
+  namespace: localhost-fail-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client-app
+  template:
+    metadata:
+      labels:
+        app: client-app
+    spec:
+      containers:
+        - name: client-container
+          image: curlimages/curl
+          # Client 持续尝试连接 Service IP，将收到 Connection Refused
+          command: ["sh", "-c", "while true; do curl -s -o /dev/null -w '%{http_code}' http://faulty-svc/ || echo 'Connection Refused'; sleep 5; done"]

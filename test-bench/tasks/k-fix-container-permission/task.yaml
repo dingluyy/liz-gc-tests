@@ -1,0 +1,6 @@
+script:
+- prompt: "My container logs show a 'Permission denied' error when trying to write to a log file. How do I fix the container's permission settings?"
+setup: "setup.sh"
+verifier: "verify.sh"
+cleanup: "cleanup.sh"
+difficulty: "medium"

@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ingress-fail-ns
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-service
+  namespace: ingress-fail-ns
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web-service
+  template:
+    metadata:
+      labels:
+        app: web-service
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          # 保持 Pod 健康且 Ready，避免把故障引到 Readiness/selector
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 2
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+  namespace: ingress-fail-ns
+spec:
+  selector:
+    app: web-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080   # 故障注入：错误 targetPort（真实后端监听 80）
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-ingress
+  namespace: ingress-fail-ns
+spec:
+  rules:
+    - host: api.test-502.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port:
+                  number: 80
+

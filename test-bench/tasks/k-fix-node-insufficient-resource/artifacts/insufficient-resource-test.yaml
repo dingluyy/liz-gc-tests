@@ -1,0 +1,31 @@
+# artifacts/insufficient-resource-test.yaml
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pending-resource-ns
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oversized-app
+  namespace: pending-resource-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oversized-app
+  template:
+    metadata:
+      labels:
+        app: oversized-app
+    spec:
+      containers:
+        - name: high-resource-container
+          image: busybox:latest
+          command: ["sh", "-c", "echo 'High resource pod' && sleep 3600"]
+          resources:
+            requests:
+              # Dynamically set to maximum node allocatable CPU + 1 core
+              cpu: "__CPU_REQUEST__"
+              memory: "1Gi"

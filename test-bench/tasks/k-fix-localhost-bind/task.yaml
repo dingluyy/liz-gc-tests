@@ -1,0 +1,6 @@
+script:
+- prompt: "My application in 'localhost-fail-ns' is running, but internal services get a 'Connection Refused' error when calling it. Diagnose why the application is rejecting the connection, and fix it."
+setup: "setup.sh"
+verifier: "verify.sh"
+cleanup: "cleanup.sh"
+difficulty: "medium"

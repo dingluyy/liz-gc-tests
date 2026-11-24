@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: permission-fail-ns
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restricted-app
+  namespace: permission-fail-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restricted-app
+  template:
+    metadata:
+      labels:
+        app: restricted-app
+    spec:
+      # NO Pod-level securityContext here
+      volumes:
+      - name: log-volume
+        emptyDir: {}
+      initContainers:
+      - name: setup-permissions
+        image: busybox:latest
+        # Runs as root by default. Create dir, chown to root, set strict permissions.
+        command: ["sh", "-c", "mkdir -p /data/logs && chown root:root /data/logs && chmod 700 /data/logs && echo 'Init complete. Permissions:' && ls -ld /data/logs"]
+        volumeMounts:
+        - name: log-volume
+          mountPath: /data
+      containers:
+        - name: permission-test-container
+          image: busybox:latest
+          securityContext: # <-- Move runAsUser HERE (Container level)
+            # Fault Injection: Run main container as non-root (UID 1000)
+            runAsUser: 1000
+          # Try to write to the root-owned /data/logs directory
+          command: ["sh", "-c", "echo 'Trying to write...' && echo 'Hello' > /data/logs/app.log && echo 'Write successful? (Should fail)' || echo 'Write failed as expected.' ; sleep 3600"]
+          volumeMounts:
+          - name: log-volume
+            mountPath: /data

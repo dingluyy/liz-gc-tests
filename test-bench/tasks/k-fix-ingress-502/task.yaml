@@ -1,0 +1,6 @@
+script:
+- prompt: "My ingress for api.test-502.com is returning 502 Bad Gateway for the web-service. Pods are Ready, but the ingress cannot reach the backend. Please diagnose the misconfiguration with evidence, apply the minimal fix, and verify the ingress returns 200."
+setup: "setup.sh"
+verifier: "verify.sh"
+cleanup: "cleanup.sh"
+difficulty: "medium"

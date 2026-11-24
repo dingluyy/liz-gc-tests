@@ -1,0 +1,6 @@
+script:
+- prompt: "Deployment 'high-cpu-app' creation in 'quota-fail-ns' is failing with a 'Forbidden' error. Diagnose the cause and fix the issue to allow 2 replicas to run."
+setup: "setup.sh"
+verifier: "verify.sh"
+cleanup: "cleanup.sh"
+difficulty: "medium"
