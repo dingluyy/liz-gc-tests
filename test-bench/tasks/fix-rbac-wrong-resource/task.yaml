@@ -1,4 +1,5 @@
 script:
+- prompt: "为什么我无法在 `simple-rbac-setup` 命名空间中使用 pod-reader ServiceAccount 列出 Pod？请修复此问题。"
 - prompt: "Why can't I list pods with my pod-reader service account in simple-rbac-setup namespace ? Please fix it."
 setup: "setup.sh"
 verifier: "verify.sh"

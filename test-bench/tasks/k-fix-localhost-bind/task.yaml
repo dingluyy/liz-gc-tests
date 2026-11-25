@@ -1,4 +1,5 @@
 script:
+- prompt: "localhost-fail-ns 命名空间下的应用 Pod 正常运行，但其他内部服务通过 faulty-svc 访问时出现 Connection Refused。请检查应用网络监听配置，找出原因并修复。"
 - prompt: "My application in 'localhost-fail-ns' is running, but internal services get a 'Connection Refused' error when calling it. Diagnose why the application is rejecting the connection, and fix it."
 setup: "setup.sh"
 verifier: "verify.sh"

@@ -1,4 +1,5 @@
 script:
+- prompt: "针对 api.test-502.com 的 Ingress 在访问后端 Web 服务时返回了 502 Bad Gateway 错误。虽然 Pod 均处于“就绪”（Ready）状态，但 Ingress 无法连接至后端。请排查配置错误并提供相关证据，实施最小化修复，并验证 Ingress 是否能正常返回 200 状态码。"
 - prompt: "My ingress for api.test-502.com is returning 502 Bad Gateway for the web-service. Pods are Ready, but the ingress cannot reach the backend. Please diagnose the misconfiguration with evidence, apply the minimal fix, and verify the ingress returns 200."
 setup: "setup.sh"
 verifier: "verify.sh"

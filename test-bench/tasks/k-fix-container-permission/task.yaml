@@ -1,4 +1,5 @@
 script:
+- prompt: "permission-fail-ns 命名空间下的容器日志出现 Permission denied，应用无法写入日志文件。请检查容器运行用户和目录权限配置，并修复该问题。"
 - prompt: "My container logs show a 'Permission denied' error when trying to write to a log file. How do I fix the container's permission settings?"
 setup: "setup.sh"
 verifier: "verify.sh"

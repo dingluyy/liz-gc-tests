@@ -1,4 +1,5 @@
 script:
+- prompt: "在 quota-fail-ns 命名空间部署 high-cpu-app 时，出现 Forbidden 相关错误。请检查原因并修复，使 2 个副本都能正常运行。"
 - prompt: "Deployment 'high-cpu-app' creation in 'quota-fail-ns' is failing with a 'Forbidden' error. Diagnose the cause and fix the issue to allow 2 replicas to run."
 setup: "setup.sh"
 verifier: "verify.sh"
